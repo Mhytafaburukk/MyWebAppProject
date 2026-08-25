@@ -1,7 +1,6 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 
@@ -36,7 +35,7 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
-app.MapGet("/products", () =>
+app.MapGet("/api/products", () =>
 {
     var products = new[]
     {
@@ -44,10 +43,38 @@ app.MapGet("/products", () =>
         new { Id = 2, Name = "Product 2", Price = 19.99 },
         new { Id = 3, Name = "Product 3", Price = 5.99 }
     };
-    return products;
+    return Results.Ok(products);
 }).WithName("GetProducts");
 
+app.MapPost("/api/products", (Product product) =>
+{
+    var newProduct = new Product
+    {
+        Id = new Random().Next(1000, 9999), // Simulate generating a new ID
+        Name = product.Name,
+        Price = product.Price
+    };
+    return Results.Created($"/api/products/{newProduct.Id}", newProduct);
+}).WithName("CreateProduct");
+
+app.MapPut("/api/products/{id}", (int id, Product updatedProduct) =>
+{
+    var product = new Product
+    {
+        Id = id,
+        Name = updatedProduct.Name,
+        Price = updatedProduct.Price
+    };
+    return Results.Ok(product);
+}).WithName("UpdateProduct");
+
+app.MapDelete("/api/products/{id}", (int id) =>
+{
+    return Results.NoContent();
+}).WithName("DeleteProduct");
+
 app.Run();
+
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
