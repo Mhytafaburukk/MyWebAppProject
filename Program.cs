@@ -9,9 +9,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<TaskDbContext>(options =>
     options.UseSqlite("Data Source=tasks.db"));
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -21,26 +21,57 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapGet("/api/tasks", async (TaskDbContext dbContext) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    var tasks = await dbContext.Tasks.ToListAsync();
+    return Results.Ok(tasks);
+}).WithName("GetTasks");
 
-app.MapGet("/weatherforecast", () =>
+app.MapGet("/api/tasks/{id}", async (int id, TaskDbContext dbContext) =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    var task = await dbContext.Tasks.FindAsync(id);
+    if (task == null)
+    {
+        return Results.NotFound();
+    }
+    return Results.Ok(task);
+}).WithName("GetTaskById");
 
+app.MapPost("/api/tasks", async (TaskItem task, TaskDbContext dbContext) =>
+{
+    dbContext.Tasks.Add(task);
+    await dbContext.SaveChangesAsync();
+    return Results.Created($"/api/tasks/{task.Id}", task);
+}).WithName("CreateTask");
 
+app.MapPut("/api/tasks/{id}", async (int id, TaskItem updatedTask, TaskDbContext dbContext) =>
+{
+    var task = await dbContext.Tasks.FindAsync(id);
+    if (task == null)
+    {
+        return Results.NotFound();
+    }
+
+    task.Title = updatedTask.Title;
+    task.Description = updatedTask.Description;
+    task.IsCompleted = updatedTask.IsCompleted;
+
+    await dbContext.SaveChangesAsync();
+    return Results.Ok(task);
+}).WithName("UpdateTask");
+
+app.MapDelete("/api/tasks/{id}", async (int id, TaskDbContext dbContext) =>
+{
+    var task = await dbContext.Tasks.FindAsync(id);
+    if (task == null)
+    {
+        return Results.NotFound();
+    }
+
+    dbContext.Tasks.Remove(task);
+    await dbContext.SaveChangesAsync();
+    return Results.NoContent();
+}).WithName("DeleteTask");
 
 app.MapGet("/api/products", () =>
 {
@@ -57,7 +88,7 @@ app.MapPost("/api/products", (Product product) =>
 {
     var newProduct = new Product
     {
-        Id = new Random().Next(1000, 9999), // Simulate generating a new ID
+        Id = new Random().Next(1000, 9999),
         Name = product.Name,
         Price = product.Price
     };
@@ -81,10 +112,4 @@ app.MapDelete("/api/products/{id}", (int id) =>
 }).WithName("DeleteProduct");
 
 app.Run();
-
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
 // Get all products
