@@ -1,0 +1,21 @@
+<div class="product-card">
+    <img src="@ProductImage" alt="@Name" class="product-img">
+    <h3 class="product-name">@Name</h3>
+    <p class="product-description">@Description</p>
+    <div class="product-price">@Price.ToString("C")</div>
+    <button class="add-to-cart" @onclick="AddToCart">Add to Cart</button>
+</div>
+
+@code {
+    [Parameter]
+    public string Name { get; set; }
+
+    [Parameter]
+    public string Description { get; set; }
+
+    [Parameter]
+    public decimal Price { get; set; }
+
+    [Parameter]
+    public string ProductImage { get; set; }
+}
