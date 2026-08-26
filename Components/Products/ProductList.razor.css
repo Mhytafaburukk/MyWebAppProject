@@ -1,0 +1,23 @@
+.product-list {
+    padding: 20px;
+}
+
+.product-list h2 {
+    margin-bottom: 24px;
+    color: #333;
+    font-size: 1.8em;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.no-products {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 40px;
+}
