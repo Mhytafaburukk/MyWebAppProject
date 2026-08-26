@@ -9,6 +9,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddServerSideBlazor()
     .AddCircuitOptions(options => { options.DetailedErrors = true; });
+builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<TaskDbContext>(options =>
     options.UseSqlite("Data Source=tasks.db"));
@@ -27,6 +28,11 @@ app.UseHttpsRedirection();
 // EKLENEN 1 & 2
 app.UseStaticFiles();
 app.UseRouting();
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapGet("/api/tasks", async (TaskDbContext dbContext) =>
 {
