@@ -40,6 +40,8 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
+
+
 app.MapGet("/api/products", () =>
 {
     var products = new[]
