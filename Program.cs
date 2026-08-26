@@ -7,6 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddServerSideBlazor()
+    .AddCircuitOptions(options => { options.DetailedErrors = true; });
+
 builder.Services.AddDbContext<TaskDbContext>(options =>
     options.UseSqlite("Data Source=tasks.db"));
 
@@ -20,6 +23,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// EKLENEN 1 & 2
+app.UseStaticFiles();
+app.UseRouting();
 
 app.MapGet("/api/tasks", async (TaskDbContext dbContext) =>
 {
@@ -111,5 +118,7 @@ app.MapDelete("/api/products/{id}", (int id) =>
     return Results.NoContent();
 }).WithName("DeleteProduct");
 
+// EKLENEN 3
+app.MapBlazorHub();
+
 app.Run();
-// Get all products
