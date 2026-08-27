@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using MyWebAppProject.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MyWebAppProject.Controllers;
 
@@ -16,6 +17,18 @@ public class HomeController : Controller
     public IActionResult Index()
     {
         return View();
+    }
+    public IActionResult ProcessForm(string UserInput)
+    {
+        if (!string.IsNullOrEmpty(UserInput)){
+            TempData["SuccessMessage"] = $"You entered: {UserInput}";
+            TempData["MessageType"] = "success";
+        }
+        else
+        {
+            TempData["ErrorMessage"] = "Please enter a value.";
+            TempData["MessageType"] = "error";
+        }
     }
 
     public IActionResult Privacy()
