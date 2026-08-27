@@ -1,0 +1,133 @@
+{
+	{
+		"Blazor Complete EditForm": {
+			"prefix": "editform",
+			"body": [
+				"<EditForm Model=\"@${1:feedbackModel}\" OnValidSubmit=\"@HandleValidSubmit\">",
+				"    <DataAnnotationsValidator />",
+				"    <ValidationSummary />",
+				"",
+				"    <div class=\"mb-3\">",
+				"        <label for=\"name\" class=\"form-label\">Name:</label>",
+				"        <InputText id=\"name\" class=\"form-control\" @bind-Value=\"${1:feedbackModel}.${2:Name}\" />",
+				"    </div>",
+				"",
+				"    <div class=\"mb-3\">",
+				"        <label for=\"comments\" class=\"form-label\">Comments:</label>",
+				"        <InputTextArea id=\"comments\" class=\"form-control\" @bind-Value=\"${1:feedbackModel}.${3:Comments}\" />",
+				"    </div>",
+				"",
+				"    <button type=\"submit\" class=\"btn btn-primary\">Submit</button>",
+				"</EditForm>",
+				"",
+				"@code {",
+				"    private ${4:Feedback} ${1:feedbackModel} = new ${4:Feedback}();",
+				"",
+				"    private void HandleValidSubmit()",
+				"    {",
+				"        $0",
+				"    }",
+				"}"
+			],
+			"description": "ValidationSummary ve @code bloğu içeren tam EditForm yapısı"
+		},
+		"Blazor New Component": {
+			"prefix": "comp",
+			"body": [
+				"@page \"/${1:route}\"",
+				"",
+				"<PageTitle>${2:Title}</PageTitle>",
+				"",
+				"<h3>${2:Title}</h3>",
+				"",
+				"$0",
+				"",
+				"@code {",
+				"    [Parameter]",
+				"    public ${3:string} ${4:ParamName} { get; set; }",
+				"}"
+			],
+			"description": "Yeni Blazor Bileşen Şablonu"
+		},
+		"Blazor Code Block": {
+			"prefix": "code",
+			"body": [
+				"@code {",
+				"    $0",
+				"}"
+			],
+			"description": "Hızlı @code bloğu ekler"
+		},
+		"Blazor Product Catalog List": {
+			"prefix": "prodlist",
+			"body": [
+				"@if (${1:products} == null)",
+				"{",
+				"    <p><em>Loading...</em></p>",
+				"}",
+				"else",
+				"{",
+				"    <div class=\"row\">",
+				"        @foreach (var item in ${1:products})",
+				"        {",
+				"            <div class=\"col-md-4 mb-3\">",
+				"                <div class=\"card\">",
+				"                    <img src=\"@item.${2:ImageUrl}\" class=\"card-img-top\" alt=\"@item.${3:Name}\" />",
+				"                    <div class=\"card-body\">",
+				"                        <h5 class=\"card-title\">@item.${3:Name}</h5>",
+				"                        <p class=\"card-text\">@item.${4:Description}</p>",
+				"                        <p class=\"card-text\"><strong>$@item.${5:Price}</strong></p>",
+				"                    </div>",
+				"                </div>",
+				"            </div>",
+				"        }",
+				"    </div>",
+				"}"
+			],
+			"description": "Katalog ve Ürün listeleme kartları yapısı"
+		},
+		"Blazor InputText Group": {
+			"prefix": "intext",
+			"body": [
+				"<div class=\"mb-3\">",
+				"    <label for=\"${1:id}\" class=\"form-label\">${2:Label}:</label>",
+				"    <InputText id=\"${1:id}\" class=\"form-control\" @bind-Value=\"${3:model}.${4:Property}\" />",
+				"</div>"
+			],
+			"description": "Bootstrap uyumlu InputText alanı"
+		},
+		"Blazor InputTextArea Group": {
+			"prefix": "inarea",
+			"body": [
+				"<div class=\"mb-3\">",
+				"    <label for=\"${1:id}\" class=\"form-label\">${2:Label}:</label>",
+				"    <InputTextArea id=\"${1:id}\" class=\"form-control\" @bind-Value=\"${3:model}.${4:Property}\" />",
+				"</div>"
+			],
+			"description": "Bootstrap uyumlu InputTextArea alanı"
+		},
+		"Blazor Parameter": {
+			"prefix": "para",
+			"body": [
+				"[Parameter]",
+				"public ${1:string} ${2:PropertyName} { get; set; }"
+			],
+			"description": "Blazor [Parameter] tanımı"
+		},
+		"Blazor EventCallback": {
+			"prefix": "eventcb",
+			"body": [
+				"[Parameter]",
+				"public EventCallback<${1:Product}> ${2:OnProductAdded} { get; set; }"
+			],
+			"description": "EventCallback parametresi"
+		},
+		"Blazor Inject": {
+			"prefix": "inj",
+			"body": [
+				"@inject ${1:NavigationManager} ${2:Navigation}"
+			],
+			"description": "Blazor @inject servisi"
+		}
+	}
+}
