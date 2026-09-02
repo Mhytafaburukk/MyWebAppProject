@@ -11,6 +11,13 @@ builder.Services.AddServerSideBlazor()
     .AddCircuitOptions(options => { options.DetailedErrors = true; });
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 builder.Services.AddDbContext<TaskDbContext>(options =>
     options.UseSqlite("Data Source=tasks.db"));
 
@@ -29,6 +36,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
@@ -85,6 +93,67 @@ app.MapDelete("/api/tasks/{id}", async (int id, TaskDbContext dbContext) =>
     await dbContext.SaveChangesAsync();
     return Results.NoContent();
 }).WithName("DeleteTask");
+
+// --- User Endpoints ---
+
+app.MapGet("/api/users", async (TaskDbContext dbContext) =>
+{
+    try 
+    {
+        // Performance: AsNoTracking() gereksiz takip mekanizmasını kapatıp hızı artırır.
+        var users = await dbContext.Users.AsNoTracking().ToListAsync();
+        return Results.Ok(users);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem("Veritabanı sorgusu sırasında bir hata oluştu: " + ex.Message);
+    }
+}).WithName("GetUsers");
+
+app.MapGet("/api/users/{id}", async (int id, TaskDbContext dbContext) =>
+{
+    try
+    {
+        var user = await dbContext.Users.FindAsync(id);
+        if (user == null)
+        {
+            // Error Handling: Kullanıcı bulunamadığında 404 dön.
+            return Results.NotFound(new { Message = $"ID'si {id} olan kullanıcı bulunamadı." });
+        }
+        return Results.Ok(user);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem("Kullanıcı getirilirken bir hata oluştu: " + ex.Message);
+    }
+}).WithName("GetUserById");
+
+app.MapPost("/api/users", async (MyWebAppProject.Models.User user, TaskDbContext dbContext) =>
+{
+    // Validation: Boş isim ve geçersiz email kontrolü
+    if (string.IsNullOrWhiteSpace(user.Name))
+    {
+        return Results.BadRequest(new { Message = "İsim alanı boş bırakılamaz." });
+    }
+
+    if (string.IsNullOrWhiteSpace(user.Email) || !user.Email.Contains("@") || !user.Email.Contains("."))
+    {
+        return Results.BadRequest(new { Message = "Geçerli bir email adresi girilmelidir." });
+    }
+
+    try 
+    {
+        dbContext.Users.Add(user);
+        await dbContext.SaveChangesAsync();
+        return Results.Created($"/api/users/{user.Id}", user);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem("Kullanıcı oluşturulurken bir hata oluştu: " + ex.Message);
+    }
+}).WithName("CreateUser");
+
+// ----------------------
 
 app.MapGet("/api/products", () =>
 {

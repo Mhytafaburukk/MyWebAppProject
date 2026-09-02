@@ -29,6 +29,23 @@ public class HomeController : Controller
             TempData["ErrorMessage"] = "Please enter a value.";
             TempData["MessageType"] = "error";
         }
+        return RedirectToAction("Index");
+    }
+    public IActionResult SavePreferences(string theme, string language)
+    {
+    HttpContext.Session.SetString("UserTheme", theme);
+    HttpContext.Session.SetString("UserLanguage", language);
+
+    TempData["SuccessMessage"] = "Preferences saved successfully!";
+    return RedirectToAction("Preferences");
+    }
+
+    public IActionResult Preferences()
+    {
+    ViewBag.CurrentTheme = HttpContext.Session.GetString("UserTheme") ?? "light";
+    ViewBag.CurrentLanguage = HttpContext.Session.GetString("UserLanguage") ?? "en";
+
+    return View();
     }
 
     public IActionResult Privacy()

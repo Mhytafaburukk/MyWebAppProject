@@ -21,4 +21,5 @@ public class TaskDbContext : DbContext
     }
 
     public DbSet<TaskItem> Tasks { get; set; }
+    public DbSet<MyWebAppProject.Models.User> Users { get; set; }
 }
